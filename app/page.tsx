@@ -16,6 +16,12 @@ interface Transaction {
   amount: number
 }
 
+interface CategoryData {
+  name: string
+  amount: number
+  percentage: number
+}
+
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState({
     totalIncome: 12500,
@@ -23,6 +29,7 @@ export default function Dashboard() {
     netSavings: 5300,
     recentTransactions: [],
   })
+  const [expenseCategories, setExpenseCategories] = useState<CategoryData[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -41,6 +48,26 @@ export default function Dashboard() {
           .filter((t) => t.type === "Expense")
           .reduce((sum, t) => sum + Math.abs(t.amount), 0)
 
+        const expenseTransactions = transactions.filter((t) => t.type === "Expense")
+        const categoryTotals: { [key: string]: number } = {}
+
+        expenseTransactions.forEach((transaction) => {
+          const category = transaction.category
+          categoryTotals[category] = (categoryTotals[category] || 0) + Math.abs(transaction.amount)
+        })
+
+        const totalExpenseAmount = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0)
+
+        const categoriesData: CategoryData[] = Object.entries(categoryTotals)
+          .map(([name, amount]) => ({
+            name,
+            amount,
+            percentage: totalExpenseAmount > 0 ? (amount / totalExpenseAmount) * 100 : 0,
+          }))
+          .sort((a, b) => b.amount - a.amount) // Sort by amount descending
+
+        setExpenseCategories(categoriesData)
+
         setDashboardData({
           totalIncome: income,
           totalExpenses: expenses,
@@ -49,11 +76,23 @@ export default function Dashboard() {
         })
       } else {
         console.log("API not available, using fallback data")
-        // Keep the default fallback data
+        setExpenseCategories([
+          { name: "Housing", amount: 3060, percentage: 85 },
+          { name: "Food", amount: 1620, percentage: 45 },
+          { name: "Transportation", amount: 1080, percentage: 30 },
+          { name: "Entertainment", amount: 720, percentage: 20 },
+          { name: "Utilities", amount: 540, percentage: 15 },
+        ])
       }
     } catch (error) {
       console.log("API connection failed, using fallback data:", error)
-      // Keep the default fallback data
+      setExpenseCategories([
+        { name: "Housing", amount: 3060, percentage: 85 },
+        { name: "Food", amount: 1620, percentage: 45 },
+        { name: "Transportation", amount: 1080, percentage: 30 },
+        { name: "Entertainment", amount: 720, percentage: 20 },
+        { name: "Utilities", amount: 540, percentage: 15 },
+      ])
     } finally {
       setLoading(false)
     }
@@ -188,46 +227,28 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Housing</span>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: "85%" }}></div>
+                {loading ? (
+                  <div className="text-center text-gray-500">Loading categories...</div>
+                ) : expenseCategories.length > 0 ? (
+                  expenseCategories.map((category) => (
+                    <div key={category.name} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 min-w-0 flex-shrink-0">{category.name}</span>
+                      <div className="flex-1 mx-4">
+                        <div className="bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${Math.min(category.percentage, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <span className="text-xs text-gray-500 min-w-0 flex-shrink-0">
+                        ${formatAmount(category.amount)}
+                      </span>
                     </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Food</span>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: "45%" }}></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Transportation</span>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: "30%" }}></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Entertainment</span>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: "20%" }}></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Utilities</span>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: "15%" }}></div>
-                    </div>
-                  </div>
-                </div>
+                  ))
+                ) : (
+                  <div className="text-center text-gray-500">No expense categories found</div>
+                )}
               </div>
             </CardContent>
           </Card>
