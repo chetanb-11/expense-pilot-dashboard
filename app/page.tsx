@@ -1,10 +1,71 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Bell, Building2, TrendingUp, TrendingDown, PiggyBank, Plus } from "lucide-react"
 import Link from "next/link"
 
+interface Transaction {
+  id: string
+  date: string
+  description: string
+  category: string
+  type: "Income" | "Expense"
+  amount: number
+}
+
 export default function Dashboard() {
+  const [dashboardData, setDashboardData] = useState({
+    totalIncome: 12500,
+    totalExpenses: 7200,
+    netSavings: 5300,
+    recentTransactions: [],
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/expenses")
+      if (response.ok) {
+        const transactions: Transaction[] = await response.json()
+
+        const income = transactions.filter((t) => t.type === "Income").reduce((sum, t) => sum + Math.abs(t.amount), 0)
+
+        const expenses = transactions
+          .filter((t) => t.type === "Expense")
+          .reduce((sum, t) => sum + Math.abs(t.amount), 0)
+
+        setDashboardData({
+          totalIncome: income,
+          totalExpenses: expenses,
+          netSavings: income - expenses,
+          recentTransactions: transactions.slice(0, 5),
+        })
+      } else {
+        console.log("API not available, using fallback data")
+        // Keep the default fallback data
+      }
+    } catch (error) {
+      console.log("API connection failed, using fallback data:", error)
+      // Keep the default fallback data
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatAmount = (amount: number) => {
+    return amount.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -66,7 +127,9 @@ export default function Dashboard() {
                 <TrendingUp className="h-5 w-5 text-green-500" />
                 <span className="text-gray-600 font-medium">Total Income</span>
               </div>
-              <div className="text-3xl font-bold text-gray-900">$12,500</div>
+              <div className="text-3xl font-bold text-gray-900">
+                ${loading ? "..." : formatAmount(dashboardData.totalIncome)}
+              </div>
             </CardContent>
           </Card>
 
@@ -76,7 +139,9 @@ export default function Dashboard() {
                 <TrendingDown className="h-5 w-5 text-red-500" />
                 <span className="text-gray-600 font-medium">Total Expenses</span>
               </div>
-              <div className="text-3xl font-bold text-gray-900">$7,200</div>
+              <div className="text-3xl font-bold text-gray-900">
+                ${loading ? "..." : formatAmount(dashboardData.totalExpenses)}
+              </div>
             </CardContent>
           </Card>
 
@@ -86,7 +151,9 @@ export default function Dashboard() {
                 <PiggyBank className="h-5 w-5 text-blue-500" />
                 <span className="text-gray-600 font-medium">Net Savings</span>
               </div>
-              <div className="text-3xl font-bold text-gray-900">$5,300</div>
+              <div className="text-3xl font-bold text-gray-900">
+                ${loading ? "..." : formatAmount(dashboardData.netSavings)}
+              </div>
             </CardContent>
           </Card>
         </div>

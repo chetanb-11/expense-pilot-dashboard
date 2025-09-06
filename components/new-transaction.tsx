@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface TransactionData {
-  type: "expense" | "income"
+  type: "Expense" | "Income"
   amount: number
   category: string
   date: string
@@ -19,7 +20,8 @@ interface TransactionData {
 }
 
 export default function NewTransaction() {
-  const [transactionType, setTransactionType] = useState<"expense" | "income">("expense")
+  const router = useRouter()
+  const [transactionType, setTransactionType] = useState<"Expense" | "Income">("Expense")
   const [amount, setAmount] = useState("")
   const [category, setCategory] = useState("")
   const [date, setDate] = useState("")
@@ -51,14 +53,14 @@ export default function NewTransaction() {
 
     const transactionData: TransactionData = {
       type: transactionType,
-      amount: Number.parseFloat(amount),
+      amount: transactionType === "Expense" ? -Number.parseFloat(amount) : Number.parseFloat(amount),
       category,
       date,
       description,
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/trasaction", {
+      const response = await fetch("http://localhost:8080/api/expense", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,12 +69,12 @@ export default function NewTransaction() {
       })
 
       if (response.ok) {
-        // Reset form
         setAmount("")
         setCategory("")
         setDate("")
         setDescription("")
         alert("Transaction added successfully!")
+        router.push("/transactions")
       } else {
         throw new Error("Failed to add transaction")
       }
@@ -85,11 +87,7 @@ export default function NewTransaction() {
   }
 
   const handleCancel = () => {
-    // Reset form
-    setAmount("")
-    setCategory("")
-    setDate("")
-    setDescription("")
+    router.push("/transactions")
   }
 
   return (
@@ -107,18 +105,18 @@ export default function NewTransaction() {
               <div className="grid grid-cols-2 gap-0 border border-gray-300 rounded-lg overflow-hidden">
                 <button
                   type="button"
-                  onClick={() => setTransactionType("expense")}
+                  onClick={() => setTransactionType("Expense")}
                   className={`py-3 px-4 text-sm font-medium transition-colors ${
-                    transactionType === "expense" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
+                    transactionType === "Expense" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
                   }`}
                 >
                   Expense
                 </button>
                 <button
                   type="button"
-                  onClick={() => setTransactionType("income")}
+                  onClick={() => setTransactionType("Income")}
                   className={`py-3 px-4 text-sm font-medium transition-colors ${
-                    transactionType === "income" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
+                    transactionType === "Income" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
                   }`}
                 >
                   Income

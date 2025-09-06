@@ -4,8 +4,10 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, ChevronDown } from "lucide-react"
+import { Search, ChevronDown, Trash2, Plus } from "lucide-react"
+import Link from "next/link"
 
 interface Transaction {
   id: string
@@ -39,12 +41,22 @@ export function TransactionsList() {
 
   useEffect(() => {
     fetchTransactions()
-  }, [])
+  }, [typeFilter, categoryFilter]) // Refetch when filters change
 
   const fetchTransactions = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:8080/api/expenses")
+      const params = new URLSearchParams()
+      if (typeFilter !== "all") {
+        params.append("type", typeFilter)
+      }
+      if (categoryFilter !== "all") {
+        params.append("category", categoryFilter)
+      }
+
+      const url = `http://localhost:8080/api/expenses${params.toString() ? `?${params.toString()}` : ""}`
+      const response = await fetch(url)
+
       if (response.ok) {
         const data = await response.json()
         setTransactions(data)
@@ -118,6 +130,29 @@ export function TransactionsList() {
     return amount >= 0 ? `+$${formatted}` : `-$${formatted}`
   }
 
+  const deleteTransaction = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this transaction?")) {
+      return
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/expense/${id}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        // Remove transaction from local state
+        setTransactions(transactions.filter((t) => t.id !== id))
+        alert("Transaction deleted successfully!")
+      } else {
+        throw new Error("Failed to delete transaction")
+      }
+    } catch (error) {
+      console.error("Error deleting transaction:", error)
+      alert("Failed to delete transaction. Please try again.")
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -128,8 +163,14 @@ export function TransactionsList() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Transactions</h1>
+        <Link href="/transactions/new">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Transaction
+          </Button>
+        </Link>
       </div>
 
       {/* Search and Filters */}
@@ -211,6 +252,9 @@ export function TransactionsList() {
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Amount
                 </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -230,6 +274,16 @@ export function TransactionsList() {
                     }`}
                   >
                     {formatAmount(transaction.amount)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteTransaction(transaction.id)}
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </td>
                 </tr>
               ))}
