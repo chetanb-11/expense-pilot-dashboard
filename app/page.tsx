@@ -258,12 +258,19 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-semibold text-gray-900">Recent Transactions</CardTitle>
-            <Link href="/transactions/new">
-              <Button variant="outline" size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                New Transaction
-              </Button>
-            </Link>
+            <div className="flex gap-2">
+              <Link href="/transactions">
+                <Button variant="outline" size="sm">
+                  View All
+                </Button>
+              </Link>
+              <Link href="/transactions/new">
+                <Button variant="outline" size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Transaction
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -278,17 +285,61 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4 text-gray-600">2024-03-15</td>
-                    <td className="py-3 px-4 text-gray-900">Salary Payment</td>
-                    <td className="py-3 px-4 text-gray-600">Income</td>
-                    <td className="py-3 px-4 text-green-600 font-medium">+$5,000.00</td>
-                    <td className="py-3 px-4">
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                        Credit
-                      </span>
-                    </td>
-                  </tr>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                        Loading transactions...
+                      </td>
+                    </tr>
+                  ) : dashboardData.recentTransactions.length > 0 ? (
+                    dashboardData.recentTransactions.map((transaction: Transaction) => (
+                      <tr key={transaction.id} className="border-b border-gray-100">
+                        <td className="py-3 px-4 text-gray-600">{new Date(transaction.date).toLocaleDateString()}</td>
+                        <td className="py-3 px-4 text-gray-900">{transaction.description}</td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              transaction.category === "Food"
+                                ? "bg-orange-100 text-orange-800"
+                                : transaction.category === "Housing"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : transaction.category === "Transportation"
+                                    ? "bg-purple-100 text-purple-800"
+                                    : transaction.category === "Entertainment"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : transaction.category === "Income"
+                                        ? "bg-green-100 text-green-800"
+                                        : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {transaction.category}
+                          </span>
+                        </td>
+                        <td
+                          className={`py-3 px-4 font-medium ${
+                            transaction.type === "Income" ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {transaction.type === "Income" ? "+" : "-"}${formatAmount(Math.abs(transaction.amount))}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              transaction.type === "Income" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {transaction.type === "Income" ? "Credit" : "Debit"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                        No recent transactions found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
