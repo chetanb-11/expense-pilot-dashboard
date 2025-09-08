@@ -29,16 +29,20 @@ export default function NewTransaction() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const categories = [
-    "Food & Dining",
-    "Housing",
-    "Transportation",
-    "Entertainment",
-    "Utilities",
-    "Healthcare",
-    "Shopping",
-    "Travel",
-    "Education",
-    "Other",
+    // "Food & Dining",
+    // "Housing",
+    // "Transportation",
+    // "Entertainment",
+    // "Utilities",
+    // "Healthcare",
+    // "Shopping",
+    // "Travel",
+    // "Education",
+      "Salary",
+      "Business",
+        "Investment",
+        "Gift",
+        "Other Income",
   ]
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,7 +132,7 @@ export default function NewTransaction() {
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">Amount</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
                 <Input
                   type="number"
                   step="0.01"
@@ -138,7 +142,7 @@ export default function NewTransaction() {
                   className="pl-8 pr-12 bg-white text-gray-900"
                   required
                 />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">USD</span>
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">INR</span>
               </div>
             </div>
 
@@ -147,7 +151,7 @@ export default function NewTransaction() {
               <label className="block text-sm font-medium text-gray-900 mb-2">Category</label>
               <Select value={category} onValueChange={setCategory} required>
                 <SelectTrigger className="bg-white text-gray-900">
-                  <SelectValue placeholder="Food & Dining" />
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
