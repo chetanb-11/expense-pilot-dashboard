@@ -28,22 +28,21 @@ export default function NewTransaction() {
   const [description, setDescription] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const categories = [
-    // "Food & Dining",
-    // "Housing",
-    // "Transportation",
-    // "Entertainment",
-    // "Utilities",
-    // "Healthcare",
-    // "Shopping",
-    // "Travel",
-    // "Education",
-      "Salary",
-      "Business",
-        "Investment",
-        "Gift",
-        "Other Income",
+  const expenseCategories = [
+    "Food & Dining",
+    "Housing",
+    "Transportation",
+    "Entertainment",
+    "Utilities",
+    "Healthcare",
+    "Shopping",
+    "Travel",
+    "Education",
   ]
+
+  const incomeCategories = ["Salary", "Business", "Investment", "Gift", "Other Income"]
+
+  const categories = transactionType === "Expense" ? expenseCategories : incomeCategories
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -94,6 +93,11 @@ export default function NewTransaction() {
     router.push("/transactions")
   }
 
+  const handleTypeChange = (type: "Expense" | "Income") => {
+    setTransactionType(type)
+    setCategory("") // Reset category when type changes
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <Card className="w-full max-w-md bg-white">
@@ -109,7 +113,7 @@ export default function NewTransaction() {
               <div className="grid grid-cols-2 gap-0 border border-gray-300 rounded-lg overflow-hidden">
                 <button
                   type="button"
-                  onClick={() => setTransactionType("Expense")}
+                  onClick={() => handleTypeChange("Expense")}
                   className={`py-3 px-4 text-sm font-medium transition-colors ${
                     transactionType === "Expense" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
                   }`}
@@ -118,7 +122,7 @@ export default function NewTransaction() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setTransactionType("Income")}
+                  onClick={() => handleTypeChange("Income")}
                   className={`py-3 px-4 text-sm font-medium transition-colors ${
                     transactionType === "Income" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
                   }`}
