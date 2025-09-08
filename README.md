@@ -49,25 +49,25 @@ Before running this project, make sure you have the following installed:
 ## 🚀 Installation
 
 1. **Clone the repository**
-   ```bash
+   \`\`\`bash
    git clone <repository-url>
    cd expense-pilot-dashboard
-   ```
+   \`\`\`
 
 2. **Install dependencies**
-   ```bash
+   \`\`\`bash
    # Using npm
    npm install
 
    # Using pnpm
    pnpm install
-   ```
+   \`\`\`
 
 3. **Set up environment variables**
    Create a `.env.local` file in the root directory:
-   ```env
+   \`\`\`env
    NEXT_PUBLIC_API_URL=http://localhost:8080/api
-   ```
+   \`\`\`
 
 ## 💻 Usage
 
@@ -75,45 +75,45 @@ Before running this project, make sure you have the following installed:
 
 Start the development server:
 
-```bash
+\`\`\`bash
 # Using npm
 npm run dev
 
 # Using pnpm
 pnpm dev
-```
+\`\`\`
 
 The application will be available at [http://localhost:3000](http://localhost:3000)
 
 ### Build for Production
 
-```bash
+\`\`\`bash
 # Using npm
 npm run build
 
 # Using pnpm
 pnpm build
-```
+\`\`\`
 
 ### Start Production Server
 
-```bash
+\`\`\`bash
 # Using npm
 npm start
 
 # Using pnpm
 pnpm start
-```
+\`\`\`
 
 ### Linting
 
-```bash
+\`\`\`bash
 # Using npm
 npm run lint
 
 # Using pnpm
 pnpm lint
-```
+\`\`\`
 
 ## 🔗 API Integration
 
@@ -128,15 +128,15 @@ The dashboard integrates with a Spring Boot backend API. The main endpoints used
 
 Update the API base URL in your environment variables:
 
-```env
+\`\`\`env
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
-```
+\`\`\`
 
 The application includes fallback data when the API is unavailable, ensuring a smooth user experience during development.
 
 ## 📁 Project Structure
 
-```
+\`\`\`
 expense-pilot-dashboard/
 ├── app/                    # Next.js app directory
 │   ├── globals.css        # Global styles
@@ -151,7 +151,7 @@ expense-pilot-dashboard/
 ├── lib/                   # Utility functions
 ├── public/                # Static assets
 └── styles/                # Additional styles
-```
+\`\`\`
 
 ## 🌐 Deployment
 
