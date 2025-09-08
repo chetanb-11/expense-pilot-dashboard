@@ -22,8 +22,15 @@ interface CategoryData {
   percentage: number
 }
 
+interface DashboardData {
+  totalIncome: number;
+  totalExpenses: number;
+  netSavings: number;
+  recentTransactions: Transaction[];
+}
+
 export default function Dashboard() {
-  const [dashboardData, setDashboardData] = useState({
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
     totalIncome: 12500,
     totalExpenses: 7200,
     netSavings: 5300,
@@ -167,7 +174,7 @@ export default function Dashboard() {
                 <span className="text-gray-600 font-medium">Total Income</span>
               </div>
               <div className="text-3xl font-bold text-gray-900">
-                ${loading ? "..." : formatAmount(dashboardData.totalIncome)}
+                ₹{loading ? "..." : formatAmount(dashboardData.totalIncome)}
               </div>
             </CardContent>
           </Card>
@@ -179,7 +186,7 @@ export default function Dashboard() {
                 <span className="text-gray-600 font-medium">Total Expenses</span>
               </div>
               <div className="text-3xl font-bold text-gray-900">
-                ${loading ? "..." : formatAmount(dashboardData.totalExpenses)}
+                ₹{loading ? "..." : formatAmount(dashboardData.totalExpenses)}
               </div>
             </CardContent>
           </Card>
@@ -191,7 +198,7 @@ export default function Dashboard() {
                 <span className="text-gray-600 font-medium">Net Savings</span>
               </div>
               <div className="text-3xl font-bold text-gray-900">
-                ${loading ? "..." : formatAmount(dashboardData.netSavings)}
+                ₹{loading ? "..." : formatAmount(dashboardData.netSavings)}
               </div>
             </CardContent>
           </Card>
@@ -242,7 +249,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <span className="text-xs text-gray-500 min-w-0 flex-shrink-0">
-                        ${formatAmount(category.amount)}
+                        ₹{formatAmount(category.amount)}
                       </span>
                     </div>
                   ))
@@ -320,7 +327,7 @@ export default function Dashboard() {
                             transaction.type === "Income" ? "text-green-600" : "text-red-600"
                           }`}
                         >
-                          {transaction.type === "Income" ? "+" : "-"}${formatAmount(Math.abs(transaction.amount))}
+                          {transaction.type === "Income" ? "+" : "-"}₹{formatAmount(Math.abs(transaction.amount))}
                         </td>
                         <td className="py-3 px-4">
                           <span
