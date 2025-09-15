@@ -66,7 +66,8 @@ export function TransactionsList() {
         params.append("category", categoryFilter)
       }
 
-      const url = `http://localhost:8080/api/expenses${params.toString() ? `?${params.toString()}` : ""}`
+      // const url = `http://localhost:8080/api/expenses${params.toString() ? `?${params.toString()}` : ""}`
+      const url = `https://expensepilot.onrender.com/api/expenses${params.toString() ? `?${params.toString()}` : ""}`
       const response = await fetch(url)
 
       if (response.ok) {
@@ -148,7 +149,8 @@ export function TransactionsList() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/expense/${id}`, {
+      // const response = await fetch(`http://localhost:8080/api/expense/${id}`, {
+      const response = await fetch(`https://expensepilot.onrender.com/api/expense/${id}`, {
         method: "DELETE",
       })
 
@@ -192,7 +194,8 @@ export function TransactionsList() {
         date: editForm.date,
       }
 
-      const response = await fetch(`http://localhost:8080/api/expense/${editingTransaction.id}`, {
+      // const response = await fetch(`http://localhost:8080/api/expense/${editingTransaction.id}`, {
+      const response = await fetch(`https://expensepilot.onrender.com/api/expense/${editingTransaction.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

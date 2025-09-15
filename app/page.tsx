@@ -45,7 +45,8 @@ export default function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/expenses")
+      // const response = await fetch("http://localhost:8080/api/expenses")
+      const response = await fetch("https://expensepilot.onrender.com/api/expenses")
       if (response.ok) {
         const transactions: Transaction[] = await response.json()
 
