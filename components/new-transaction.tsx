@@ -96,7 +96,7 @@ export default function NewTransaction() {
 
   const handleTypeChange = (type: "Expense" | "Income") => {
     setTransactionType(type)
-    setCategory("") // Reset category when type changes
+    setCategory("")
   }
 
   return (
