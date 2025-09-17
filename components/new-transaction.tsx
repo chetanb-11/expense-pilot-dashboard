@@ -63,8 +63,8 @@ export default function NewTransaction() {
     }
 
     try {
-      // const response = await fetch("http://localhost:8080/api/expense", {
-      const response = await fetch("https://expensepilot.onrender.com/api/expense", {
+      const response = await fetch("http://localhost:8080/api/expense", {
+      // const response = await fetch("https://expensepilot.onrender.com/api/expense", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
