@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Search, ChevronDown, Trash2, Plus, Edit } from "lucide-react"
 import Link from "next/link"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
 interface Transaction {
   id: string
   date: string
