@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Bell, Building2, TrendingUp, TrendingDown, PiggyBank, Plus } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
 
 interface Transaction {
@@ -23,10 +24,10 @@ interface CategoryData {
 }
 
 interface DashboardData {
-  totalIncome: number;
-  totalExpenses: number;
-  netSavings: number;
-  recentTransactions: Transaction[];
+  totalIncome: number
+  totalExpenses: number
+  netSavings: number
+  recentTransactions: Transaction[]
 }
 
 export default function Dashboard() {
@@ -114,34 +115,35 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className="bg-card border-b border-border px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building2 className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-semibold text-gray-900">ExpensePilot</span>
+            <span className="text-xl font-semibold text-foreground">ExpensePilot</span>
           </div>
 
           <nav className="flex items-center gap-8">
             <a href="#" className="text-blue-600 font-medium">
               Dashboard
             </a>
-            <Link href="/transactions" className="text-gray-500 hover:text-gray-700">
+            <Link href="/transactions" className="text-muted-foreground hover:text-foreground">
               Transactions
             </Link>
-            <a href="#" className="text-gray-500 hover:text-gray-700">
+            <a href="#" className="text-muted-foreground hover:text-foreground">
               Reports
             </a>
-            <a href="#" className="text-gray-500 hover:text-gray-700">
+            <a href="#" className="text-muted-foreground hover:text-foreground">
               Budget
             </a>
           </nav>
 
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5 text-gray-500" />
+              <Bell className="h-5 w-5 text-muted-foreground" />
             </Button>
+            <ThemeToggle />
             <Avatar className="h-8 w-8">
               <AvatarImage src="/professional-woman-avatar.png" />
               <AvatarFallback>JD</AvatarFallback>
@@ -155,8 +157,8 @@ export default function Dashboard() {
         {/* Page Title */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Overview of your financial activity</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
+            <p className="text-muted-foreground">Overview of your financial activity</p>
           </div>
           <Link href="/transactions/new">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -172,9 +174,9 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-2">
                 <TrendingUp className="h-5 w-5 text-green-500" />
-                <span className="text-gray-600 font-medium">Total Income</span>
+                <span className="text-muted-foreground font-medium">Total Income</span>
               </div>
-              <div className="text-3xl font-bold text-gray-900">
+              <div className="text-3xl font-bold text-foreground">
                 ₹{loading ? "..." : formatAmount(dashboardData.totalIncome)}
               </div>
             </CardContent>
@@ -184,9 +186,9 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-2">
                 <TrendingDown className="h-5 w-5 text-red-500" />
-                <span className="text-gray-600 font-medium">Total Expenses</span>
+                <span className="text-muted-foreground font-medium">Total Expenses</span>
               </div>
-              <div className="text-3xl font-bold text-gray-900">
+              <div className="text-3xl font-bold text-foreground">
                 ₹{loading ? "..." : formatAmount(dashboardData.totalExpenses)}
               </div>
             </CardContent>
@@ -196,9 +198,9 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-2">
                 <PiggyBank className="h-5 w-5 text-blue-500" />
-                <span className="text-gray-600 font-medium">Net Savings</span>
+                <span className="text-muted-foreground font-medium">Net Savings</span>
               </div>
-              <div className="text-3xl font-bold text-gray-900">
+              <div className="text-3xl font-bold text-foreground">
                 ₹{loading ? "..." : formatAmount(dashboardData.netSavings)}
               </div>
             </CardContent>
@@ -210,18 +212,18 @@ export default function Dashboard() {
           {/* Income vs Expenses Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Income vs. Expenses</CardTitle>
-              <p className="text-sm text-gray-500">This Month</p>
+              <CardTitle className="text-lg font-semibold text-foreground">Income vs. Expenses</CardTitle>
+              <p className="text-sm text-muted-foreground">This Month</p>
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-8 h-48">
                 <div className="flex flex-col items-center gap-2">
                   <div className="bg-green-500 w-16 h-32 rounded-t"></div>
-                  <span className="text-sm text-gray-600">Income</span>
+                  <span className="text-sm text-muted-foreground">Income</span>
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <div className="bg-red-500 w-16 h-24 rounded-t"></div>
-                  <span className="text-sm text-gray-600">Expenses</span>
+                  <span className="text-sm text-muted-foreground">Expenses</span>
                 </div>
               </div>
             </CardContent>
@@ -230,32 +232,32 @@ export default function Dashboard() {
           {/* Expense Categories Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Expense Categories</CardTitle>
-              <p className="text-sm text-gray-500">This Month</p>
+              <CardTitle className="text-lg font-semibold text-foreground">Expense Categories</CardTitle>
+              <p className="text-sm text-muted-foreground">This Month</p>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {loading ? (
-                  <div className="text-center text-gray-500">Loading categories...</div>
+                  <div className="text-center text-muted-foreground">Loading categories...</div>
                 ) : expenseCategories.length > 0 ? (
                   expenseCategories.map((category) => (
                     <div key={category.name} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 min-w-0 flex-shrink-0">{category.name}</span>
+                      <span className="text-sm text-muted-foreground min-w-0 flex-shrink-0">{category.name}</span>
                       <div className="flex-1 mx-4">
-                        <div className="bg-gray-200 rounded-full h-2">
+                        <div className="bg-muted rounded-full h-2">
                           <div
                             className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                             style={{ width: `${Math.min(category.percentage, 100)}%` }}
                           ></div>
                         </div>
                       </div>
-                      <span className="text-xs text-gray-500 min-w-0 flex-shrink-0">
+                      <span className="text-xs text-muted-foreground min-w-0 flex-shrink-0">
                         ₹{formatAmount(category.amount)}
                       </span>
                     </div>
                   ))
                 ) : (
-                  <div className="text-center text-gray-500">No expense categories found</div>
+                  <div className="text-center text-muted-foreground">No expense categories found</div>
                 )}
               </div>
             </CardContent>
@@ -265,7 +267,7 @@ export default function Dashboard() {
         {/* Recent Transactions */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-900">Recent Transactions</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">Recent Transactions</CardTitle>
             <div className="flex gap-2">
               <Link href="/transactions">
                 <Button variant="outline" size="sm">
@@ -284,40 +286,42 @@ export default function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">DATE</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">DESCRIPTION</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">CATEGORY</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">AMOUNT</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">TYPE</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">DATE</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">DESCRIPTION</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">CATEGORY</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">AMOUNT</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">TYPE</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                      <td colSpan={5} className="py-8 text-center text-muted-foreground">
                         Loading transactions...
                       </td>
                     </tr>
                   ) : dashboardData.recentTransactions.length > 0 ? (
                     dashboardData.recentTransactions.map((transaction: Transaction) => (
-                      <tr key={transaction.id} className="border-b border-gray-100">
-                        <td className="py-3 px-4 text-gray-600">{new Date(transaction.date).toLocaleDateString()}</td>
-                        <td className="py-3 px-4 text-gray-900">{transaction.description}</td>
+                      <tr key={transaction.id} className="border-b border-border/50">
+                        <td className="py-3 px-4 text-muted-foreground">
+                          {new Date(transaction.date).toLocaleDateString()}
+                        </td>
+                        <td className="py-3 px-4 text-foreground">{transaction.description}</td>
                         <td className="py-3 px-4">
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
                               transaction.category === "Food"
-                                ? "bg-orange-100 text-orange-800"
+                                ? "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
                                 : transaction.category === "Housing"
-                                  ? "bg-blue-100 text-blue-800"
+                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
                                   : transaction.category === "Transportation"
-                                    ? "bg-purple-100 text-purple-800"
+                                    ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
                                     : transaction.category === "Entertainment"
-                                      ? "bg-yellow-100 text-yellow-800"
+                                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
                                       : transaction.category === "Income"
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-gray-100 text-gray-800"
+                                        ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                        : "bg-muted text-muted-foreground"
                             }`}
                           >
                             {transaction.category}
@@ -325,7 +329,9 @@ export default function Dashboard() {
                         </td>
                         <td
                           className={`py-3 px-4 font-medium ${
-                            transaction.type === "Income" ? "text-green-600" : "text-red-600"
+                            transaction.type === "Income"
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-red-600 dark:text-red-400"
                           }`}
                         >
                           {transaction.type === "Income" ? "+" : "-"}₹{formatAmount(Math.abs(transaction.amount))}
@@ -333,7 +339,9 @@ export default function Dashboard() {
                         <td className="py-3 px-4">
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              transaction.type === "Income" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                              transaction.type === "Income"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
                             }`}
                           >
                             {transaction.type === "Income" ? "Credit" : "Debit"}
@@ -343,7 +351,7 @@ export default function Dashboard() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                      <td colSpan={5} className="py-8 text-center text-muted-foreground">
                         No recent transactions found
                       </td>
                     </tr>
