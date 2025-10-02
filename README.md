@@ -7,29 +7,33 @@
 
 ## 📋 Overview
 
-ExpensePilot is a modern, responsive dashboard for personal finance management. Built with Next.js and TypeScript, it provides an intuitive interface for tracking income, expenses, and financial goals. The dashboard integrates with a Spring Boot backend API to fetch and display financial data in real-time.
+ExpensePilot is a modern, responsive dashboard for personal finance management. Built with Next.js and TypeScript, it provides an intuitive interface for tracking income, expenses, and financial goals. The dashboard integrates with a Spring Boot backend API to fetch and display financial data in real-time. It includes user authentication to protect user data.
 
 ## ✨ Features
 
-- **Dashboard Overview**: Comprehensive view of total income, expenses, and net savings
-- **Transaction Management**: View, add, and manage financial transactions
-- **Expense Categories**: Visual breakdown of spending by category with percentage charts
-- **Real-time Data**: Fetches live data from backend API with fallback support
-- **Responsive Design**: Optimized for desktop and mobile devices
-- **Modern UI**: Clean, professional interface using Radix UI components
-- **Dark/Light Mode**: Theme support for better user experience
+- **User Authentication**: Secure user registration and login functionality.
+- **Protected Routes**: Ensures that only authenticated users can access the dashboard and transactions pages.
+- **Dashboard Overview**: Comprehensive view of total income, expenses, and net savings.
+- **Transaction Management**: View, add, and manage financial transactions.
+- **Expense Categories**: Visual breakdown of spending by category with percentage charts.
+- **Real-time Data**: Fetches live data from the backend API with fallback support.
+- **Responsive Design**: Optimized for desktop and mobile devices.
+- **Modern UI**: Clean, professional interface using Radix UI and shadcn/ui components.
+- **Dark/Light Mode**: Theme support for better user experience.
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Framework**: Next.js 14 with App Router
+- **Framework**: Next.js 14.2.16 with App Router
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS with custom animations
-- **UI Components**: Radix UI primitives
+- **Styling**: Tailwind CSS with custom animations and `tailwindcss-animate`.
+- **UI Components**: Radix UI primitives and shadcn/ui.
 - **Icons**: Lucide React
-- **Charts**: Recharts for data visualization
-- **Forms**: React Hook Form with Zod validation
-- **Theming**: next-themes for dark/light mode
+- **Charts**: Recharts for data visualization.
+- **Forms**: React Hook Form with Zod for validation.
+- **Theming**: `next-themes` for dark/light mode.
+- **State Management**: Context API for theme and potentially auth.
+- **Utility Libraries**: `date-fns` for date formatting, `clsx` and `tailwind-merge` for class name management.
 
 ### Development Tools
 - **Build Tool**: Next.js CLI
@@ -49,25 +53,25 @@ Before running this project, make sure you have the following installed:
 ## 🚀 Installation
 
 1. **Clone the repository**
-   \`\`\`bash
+   ```bash
    git clone <repository-url>
    cd expense-pilot-dashboard
-   \`\`\`
+   ```
 
 2. **Install dependencies**
-   \`\`\`bash
+   ```bash
    # Using npm
    npm install
 
    # Using pnpm
    pnpm install
-   \`\`\`
+   ```
 
 3. **Set up environment variables**
    Create a `.env.local` file in the root directory:
-   \`\`\`env
+   ```env
    NEXT_PUBLIC_API_URL=http://localhost:8080/api
-   \`\`\`
+   ```
 
 ## 💻 Usage
 
@@ -75,50 +79,55 @@ Before running this project, make sure you have the following installed:
 
 Start the development server:
 
-\`\`\`bash
+```bash
 # Using npm
 npm run dev
 
 # Using pnpm
 pnpm dev
-\`\`\`
+```
 
 The application will be available at [http://localhost:3000](http://localhost:3000)
 
 ### Build for Production
 
-\`\`\`bash
+```bash
 # Using npm
 npm run build
 
 # Using pnpm
 pnpm build
-\`\`\`
+```
 
 ### Start Production Server
 
-\`\`\`bash
+```bash
 # Using npm
 npm start
 
 # Using pnpm
 pnpm start
-\`\`\`
+```
 
 ### Linting
 
-\`\`\`bash
+```bash
 # Using npm
 npm run lint
 
 # Using pnpm
 pnpm lint
-\`\`\`
+```
 
 ## 🔗 API Integration
 
 The dashboard integrates with a Spring Boot backend API. The main endpoints used:
 
+### Authentication
+- `POST /api/auth/register` - Register a new user.
+- `POST /api/auth/login` - Authenticate a user and receive a JWT.
+
+### Expenses
 - `GET /api/expenses` - Fetch all transactions
 - `POST /api/expenses` - Create new transaction
 - `PUT /api/expenses/{id}` - Update transaction
@@ -128,30 +137,56 @@ The dashboard integrates with a Spring Boot backend API. The main endpoints used
 
 Update the API base URL in your environment variables:
 
-\`\`\`env
+```env
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
-\`\`\`
+```
 
 The application includes fallback data when the API is unavailable, ensuring a smooth user experience during development.
 
+## 🔐 Authentication Flow
+The frontend application manages authentication using JWT (JSON Web Tokens).
+1.  A user registers or logs in through the `/register` or `/login` pages.
+2.  Upon successful authentication, the backend sends a JWT to the client.
+3.  The JWT is stored securely in the browser (e.g., in `localStorage` or `sessionStorage`).
+4.  For subsequent requests to protected API routes, the JWT is included in the `Authorization` header.
+5.  The `protected-route.tsx` component wraps pages that require authentication. It checks for the presence of a valid token and redirects unauthenticated users to the login page.
+6.  The `lib/auth.ts` file contains helper functions for managing the authentication token.
+
 ## 📁 Project Structure
 
-\`\`\`
+```
 expense-pilot-dashboard/
 ├── app/                    # Next.js app directory
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Dashboard page
-│   └── transactions/      # Transactions pages
-├── components/            # Reusable components
-│   ├── ui/               # UI components (Radix UI)
+│   ├── globals.css         # Global styles
+│   ├── layout.tsx          # Root layout
+│   ├── page.tsx            # Dashboard page (protected)
+│   ├── login/              # Login page
+│   │   └── page.tsx
+│   ├── register/           # Registration page
+│   │   └── page.tsx
+│   └── transactions/       # Transactions pages (protected)
+│       ├── page.tsx
+│       └── new/
+│           └── page.tsx
+├── components/             # Reusable components
+│   ├── ui/                 # UI components from shadcn/ui (Button, Card, etc.)
 │   ├── new-transaction.tsx
-│   ├── transactions-list.tsx
-│   └── theme-provider.tsx
-├── lib/                   # Utility functions
-├── public/                # Static assets
-└── styles/                # Additional styles
-\`\`\`
+│   ├── protected-route.tsx # HOC for protecting routes
+│   ├── theme-provider.tsx
+│   ├── theme-toggle.tsx
+│   └── transactions-list.tsx
+├── lib/                    # Utility functions
+│   ├── auth.ts             # Authentication-related helpers
+│   └── utils.ts            # General utility functions
+├── public/                 # Static assets
+└── styles/                 # Additional styles
+```
+
+## ⚙️ Configuration
+The `next.config.mjs` file contains the following notable configurations:
+- **`eslint: { ignoreDuringBuilds: true }`**: ESLint errors will not fail the production build.
+- **`typescript: { ignoreBuildErrors: true }`**: TypeScript errors will not fail the production build.
+- **`images: { unoptimized: true }`**: The Next.js Image Optimization API is disabled.
 
 ## 🌐 Deployment
 
