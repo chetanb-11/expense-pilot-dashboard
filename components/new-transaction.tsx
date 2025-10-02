@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { authService } from "@/lib/auth"
 
 interface TransactionData {
   type: "Expense" | "Income"
@@ -63,11 +64,12 @@ export default function NewTransaction() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/expense", {
-      // const response = await fetch("https://expensepilot.onrender.com/api/expense", {
+      const token = authService.getToken()
+      const response = await fetch("http://localhost:8080/api/expenses", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(transactionData),
       })
@@ -100,23 +102,23 @@ export default function NewTransaction() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <Card className="w-full max-w-md bg-white">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <Card className="w-full max-w-md bg-card">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-900">Add Transaction</CardTitle>
-          <p className="text-gray-600">Enter the details for your new transaction.</p>
+          <CardTitle className="text-2xl font-bold text-foreground">Add Transaction</CardTitle>
+          <p className="text-muted-foreground">Enter the details for your new transaction.</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Type Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-3">Type</label>
-              <div className="grid grid-cols-2 gap-0 border border-gray-300 rounded-lg overflow-hidden">
+              <label className="block text-sm font-medium text-foreground mb-3">Type</label>
+              <div className="grid grid-cols-2 gap-0 border border-border rounded-lg overflow-hidden">
                 <button
                   type="button"
                   onClick={() => handleTypeChange("Expense")}
                   className={`py-3 px-4 text-sm font-medium transition-colors ${
-                    transactionType === "Expense" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
+                    transactionType === "Expense" ? "bg-blue-600 text-white" : "bg-card text-foreground hover:bg-muted"
                   }`}
                 >
                   Expense
@@ -125,7 +127,7 @@ export default function NewTransaction() {
                   type="button"
                   onClick={() => handleTypeChange("Income")}
                   className={`py-3 px-4 text-sm font-medium transition-colors ${
-                    transactionType === "Income" ? "bg-blue-600 text-white" : "bg-white text-gray-900 hover:bg-gray-50"
+                    transactionType === "Income" ? "bg-blue-600 text-white" : "bg-card text-foreground hover:bg-muted"
                   }`}
                 >
                   Income
@@ -135,27 +137,29 @@ export default function NewTransaction() {
 
             {/* Amount */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Amount</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Amount</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">₹</span>
                 <Input
                   type="number"
                   step="0.01"
                   placeholder="0.00"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="pl-8 pr-12 bg-white text-gray-900"
+                  className="pl-8 pr-12 bg-card text-foreground"
                   required
                 />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">INR</span>
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+                  INR
+                </span>
               </div>
             </div>
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Category</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Category</label>
               <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger className="bg-white text-gray-900">
+                <SelectTrigger className="bg-card text-foreground">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -170,28 +174,28 @@ export default function NewTransaction() {
 
             {/* Date */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Date</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Date</label>
               <div className="relative">
                 <Input
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="pr-10 bg-white text-gray-900"
+                  className="pr-10 bg-card text-foreground"
                   required
                 />
-                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               </div>
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Description</label>
               <Textarea
                 placeholder="Add a note (e.g., Dinner with colleagues)"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className="resize-none bg-white text-gray-900"
+                className="resize-none bg-card text-foreground"
               />
             </div>
 
@@ -201,7 +205,7 @@ export default function NewTransaction() {
                 type="button"
                 variant="outline"
                 onClick={handleCancel}
-                className="flex-1 bg-white text-gray-900 border-gray-300 hover:bg-gray-50"
+                className="flex-1 bg-card text-foreground border-border hover:bg-muted"
               >
                 Cancel
               </Button>
