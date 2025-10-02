@@ -24,7 +24,7 @@ import {
 import Link from "next/link"
 import { authService } from "@/lib/auth"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
 interface Transaction {
   id: string
@@ -78,25 +78,23 @@ export function TransactionsList() {
 
   useEffect(() => {
     fetchTransactions()
-  }, [typeFilter, categoryFilter])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [searchTerm, startDate, endDate, categoryFilter, typeFilter, sortField, sortOrder])
+  }, [typeFilter, categoryFilter, startDate, endDate, searchTerm, sortField, sortOrder, currentPage, itemsPerPage])
 
   const fetchTransactions = async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
-      if (typeFilter !== "all") {
-        params.append("type", typeFilter)
-      }
-      if (categoryFilter !== "all") {
-        params.append("category", categoryFilter)
-      }
+      if (typeFilter !== "all") params.append("type", typeFilter)
+      if (categoryFilter !== "all") params.append("category", categoryFilter)
+      if (startDate) params.append("startDate", startDate)
+      if (endDate) params.append("endDate", endDate)
+      if (searchTerm) params.append("description", searchTerm)
+      if (sortField) params.append("sortField", sortField)
+      if (sortOrder) params.append("sortOrder", sortOrder)
 
       const token = authService.getToken()
-      const url = `http://localhost:8080/api/expenses${params.toString() ? `?${params.toString()}` : ""}`
+      console.log("[DEBUG] Token used for fetch:", token)
+      const url = `${API_URL}/api/expenses?${params.toString()}`
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -118,54 +116,13 @@ export function TransactionsList() {
     }
   }
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    const matchesSearch =
-      transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.category.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "all" || transaction.category === categoryFilter
-    const matchesType = typeFilter === "all" || transaction.type === typeFilter
-
-    // Date range filtering
-    let matchesDateRange = true
-    if (startDate || endDate) {
-      const transactionDate = new Date(transaction.date)
-      if (startDate) {
-        const start = new Date(startDate)
-        matchesDateRange = matchesDateRange && transactionDate >= start
-      }
-      if (endDate) {
-        const end = new Date(endDate)
-        end.setHours(23, 59, 59, 999)
-        matchesDateRange = matchesDateRange && transactionDate <= end
-      }
-    }
-
-    return matchesSearch && matchesCategory && matchesType && matchesDateRange
-  })
-
-  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
-    if (!sortOrder) return 0
-
-    let comparison = 0
-    switch (sortField) {
-      case "date":
-        comparison = new Date(a.date).getTime() - new Date(b.date).getTime()
-        break
-      case "amount":
-        comparison = Math.abs(a.amount) - Math.abs(b.amount)
-        break
-      case "description":
-        comparison = a.description.localeCompare(b.description)
-        break
-    }
-
-    return sortOrder === "asc" ? comparison : -comparison
-  })
-
-  const totalPages = Math.ceil(sortedTransactions.length / itemsPerPage)
+  const totalPages = Math.ceil(transactions.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const paginatedTransactions = sortedTransactions.slice(startIndex, endIndex)
+  const paginatedTransactions = transactions.slice(startIndex, endIndex)
+
+  // Fix: Define sortedTransactions for UI usage
+  const sortedTransactions = paginatedTransactions
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -208,7 +165,7 @@ export function TransactionsList() {
     try {
       setIsDeleting(id)
       const token = authService.getToken()
-      const response = await fetch(`http://localhost:8080/api/expenses/${id}`, {
+      const response = await fetch(`${API_URL}/api/expenses/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -258,7 +215,7 @@ export function TransactionsList() {
       }
 
       const token = authService.getToken()
-      const response = await fetch(`http://localhost:8080/api/expenses/${editingTransaction.id}`, {
+      const response = await fetch(`${API_URL}/api/expenses/${editingTransaction.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

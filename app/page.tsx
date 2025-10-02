@@ -51,17 +51,31 @@ export default function Dashboard() {
   useEffect(() => {
     const currentUser = authService.getUser()
     setUser(currentUser)
+    if (!currentUser) {
+      router.push("/login")
+      return
+    }
     fetchDashboardData()
   }, [])
 
   const fetchDashboardData = async () => {
     try {
       const token = authService.getToken()
-      const response = await fetch("http://localhost:8080/api/expenses", {
+      console.log("[DEBUG] Dashboard token:", token)
+      if (!token) {
+        router.push("/login")
+        return
+      }
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/expenses`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
+      if (response.status === 401) {
+        authService.removeToken()
+        router.push("/login")
+        return
+      }
       if (response.ok) {
         const transactions: Transaction[] = await response.json()
 
@@ -98,24 +112,22 @@ export default function Dashboard() {
           recentTransactions: transactions.slice(0, 5),
         })
       } else {
-        console.log("API not available, using fallback data")
-        setExpenseCategories([
-          { name: "Housing", amount: 3060, percentage: 42.5 },
-          { name: "Food", amount: 1620, percentage: 22.5 },
-          { name: "Transportation", amount: 1080, percentage: 15 },
-          { name: "Entertainment", amount: 720, percentage: 10 },
-          { name: "Utilities", amount: 540, percentage: 7.5 },
-        ])
+        console.error("API not available, using fallback data")
+        setDashboardData({
+          totalIncome: 12500,
+          totalExpenses: 7200,
+          netSavings: 5300,
+          recentTransactions: [],
+        })
       }
     } catch (error) {
-      console.log("API connection failed, using fallback data:", error)
-      setExpenseCategories([
-        { name: "Housing", amount: 3060, percentage: 42.5 },
-        { name: "Food", amount: 1620, percentage: 22.5 },
-        { name: "Transportation", amount: 1080, percentage: 15 },
-        { name: "Entertainment", amount: 720, percentage: 10 },
-        { name: "Utilities", amount: 540, percentage: 7.5 },
-      ])
+      console.error("Error fetching dashboard data:", error)
+      setDashboardData({
+        totalIncome: 12500,
+        totalExpenses: 7200,
+        netSavings: 5300,
+        recentTransactions: [],
+      })
     } finally {
       setLoading(false)
     }
@@ -303,7 +315,7 @@ export default function Dashboard() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => `${name} ${((percent as number) * 100).toFixed(0)}%`}
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"

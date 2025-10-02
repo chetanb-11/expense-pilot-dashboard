@@ -65,7 +65,8 @@ export default function NewTransaction() {
 
     try {
       const token = authService.getToken()
-      const response = await fetch("http://localhost:8080/api/expenses", {
+      console.log('Token used for Authorization:', token)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/expense`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +74,10 @@ export default function NewTransaction() {
         },
         body: JSON.stringify(transactionData),
       })
-
+      console.log('Add expense response status:', response.status)
+      let responseBody = null
+      try { responseBody = await response.json() } catch {}
+      console.log('Add expense response body:', responseBody)
       if (response.ok) {
         setAmount("")
         setCategory("")
@@ -82,11 +86,11 @@ export default function NewTransaction() {
         alert("Transaction added successfully!")
         router.push("/transactions")
       } else {
-        throw new Error("Failed to add transaction")
+        alert(`Failed to add transaction: ${responseBody?.message || response.statusText}`)
       }
     } catch (error) {
-      console.error("Error adding transaction:", error)
-      alert("Failed to add transaction. Please try again.")
+      alert("Error adding transaction. Please try again.")
+      console.error(error)
     } finally {
       setIsSubmitting(false)
     }

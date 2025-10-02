@@ -26,9 +26,9 @@ export default function LoginPage() {
 
     try {
       const response = await authService.login(username, password)
-      authService.setToken(response.token)
+      authService.setToken(response.accessToken)
       authService.setUser(response.user)
-      router.push("/")
+      router.push("/transactions")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed. Please try again.")
     } finally {
